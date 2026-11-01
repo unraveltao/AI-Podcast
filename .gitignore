@@ -1,0 +1,10 @@
+# 音频体积大、可重新生成，不进版本库；目录与说明保留
+media/voice-samples/*
+!media/voice-samples/.gitkeep
+media/episode-audio/*
+!media/episode-audio/.gitkeep
+
+# 系统垃圾
+Thumbs.db
+desktop.ini
+.DS_Store
