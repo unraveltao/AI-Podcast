@@ -2,7 +2,10 @@
 
 一个仓库，两件事：**写节目** 和 **把节目变成声音**。
 
-**状态**：资源端已就位，实现端刚做完环境检查。目前零成品音频。
+**仓库**：https://github.com/unraveltao/AI-Podcast
+
+**状态**：资源端已就位；实现端单句链路已跑通（IndexTTS 出 WAV → Applio 换声），
+整集拼接与导出尚未实现。目前零成品音频。
 
 ---
 
@@ -47,8 +50,8 @@ psychology-podcast/
     │   └── characters.yaml        # 角色 → 参考音频 / RVC 模型 / 参数
     ├── scripts/                   # 每集剧本 YAML（ChatGPT 写，格式见该目录 README）
     ├── engines/
-    │   ├── rvc-models/            # RVC 音色模型（.pth + .index）
-    │   └── applio/                # Applio 本体（待安装）
+    │   ├── rvc-models/            # RVC 音色模型（.pth + .index，不进 git）
+    │   └── applio/                # Applio V3.7.1 本体（已装，不进 git）
     ├── outputs/                   # raw / converted / final
     ├── logs/
     ├── tests/
@@ -127,9 +130,10 @@ psychology-podcast/
 
 ## 接下来
 
-1. **补参考音频** —— `content/media/voice-samples/` 现在是空的，没有它 IndexTTS 合成不了。
-2. **装 Applio** —— 阶段二，装到 `pipeline/engines/applio`。
-3. **跑通单句** —— IndexTTS 出一段 → RVC 换声 → A/B 试听。
-4. 单句通了，再写集成器（阶段五）。
+1. **重录参考音频** —— 现在的 `narrator-selfrecorded.wav` 来自网页录音器，带不可逆的回声消除痕迹。
+   用系统录音机或 Audacity 重录一段 10 秒干声，替换 `content/media/voice-samples/` 里的文件。
+2. **写集成器** —— `orchestrator.py` / `audio_composer.py`，把逐句 TTS + RVC + 拼接串起来。
+3. **跑通整集** —— 用 `content/episodes/EP001-emotion-labeling` 的脚本产出第一份完整 WAV。
 
+已完成：环境检查、Applio 安装、RVC 模型验证、单句 TTS 与 RVC 转换。
 环境检查的完整结论见 [`pipeline/docs/environment-report.md`](pipeline/docs/environment-report.md)。

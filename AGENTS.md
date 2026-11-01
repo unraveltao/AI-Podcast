@@ -72,5 +72,6 @@
 | 显存吃紧 | 8 GB，桌面已占 2 GB；WebUI 开着时合成慢 **70 倍** | 跑批前关掉 7860 上的 WebUI 和浏览器 |
 | 参考音频不全 | `doctor` / `student` 的 `reference_audio` 还是 null | 各补一段 5–15 秒干净人声；`narrator` 已有 |
 | 素材格式不一 | mp3 / m4a / 40k wav 混着来 | 一律先过 `pipeline/audio_prep.py` |
+| GitHub 推送 | 走 https 报 `CONNECT tunnel failed, response 502`，`gh` 网页登录也失败（github.com 主站被阻断） | **用 SSH**：`origin` 已是 `git@github.com:unraveltao/AI-Podcast.git`，`git push` 直接可用。新建仓库只能在网页手动建，连接器令牌没有建仓权限（403） |
 
 细节见 `pipeline/docs/environment-report.md`。
