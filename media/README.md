@@ -6,6 +6,7 @@
 |---|---|---|
 | `voice-samples/` | 有授权的参考声音、候选试听片段 | `角色名-来源.ext`，如 `lin-teacher-own.mp3` |
 | `episode-audio/` | 试读、配音成品、发布前音频 | `EP001-试读-v1.mp3`、`EP001-成品.mp3` |
+| `voice-models/` | RVC 音色模型（`.pth` + `.index`），**不是音频** | 一模型一目录，说明见 [voice-models/README.md](voice-models/README.md) |
 
 ## 注意
 

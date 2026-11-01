@@ -4,6 +4,10 @@ media/voice-samples/*
 media/episode-audio/*
 !media/episode-audio/.gitkeep
 
+# RVC 模型是二进制大文件，也不该进库（还有版权问题）；只留说明
+media/voice-models/*
+!media/voice-models/README.md
+
 # 系统垃圾
 Thumbs.db
 desktop.ini
