@@ -1,12 +1,28 @@
-# 音频体积大、可重新生成，不进版本库；目录与说明保留
-media/voice-samples/*
-!media/voice-samples/.gitkeep
-media/episode-audio/*
-!media/episode-audio/.gitkeep
+# 音频：体积大、可重新生成，不进版本库；只留目录和说明
+content/media/voice-samples/*
+!content/media/voice-samples/.gitkeep
+content/media/episode-audio/*
+!content/media/episode-audio/.gitkeep
 
-# RVC 模型是二进制大文件，也不该进库（还有版权问题）；只留说明
-media/voice-models/*
-!media/voice-models/README.md
+# RVC 模型：二进制大文件 + 版权问题，只留说明
+pipeline/engines/rvc-models/**/*.pth
+pipeline/engines/rvc-models/**/*.index
+pipeline/engines/rvc-models/**/*.pt
+
+# 引擎本体：自带独立 Python 环境，几百 MB 到几 GB
+pipeline/engines/applio/
+
+# 产物与运行日志
+pipeline/outputs/
+pipeline/logs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
 
 # 系统垃圾
 Thumbs.db

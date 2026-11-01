@@ -42,13 +42,21 @@
 
 每定一个固定角色，在这里加一行。跨集复用，不要每集重新挑。
 
-| 角色 | 关系位 | 稳定特征 | 参考样本 / 模型 | 授权 |
-|---|---|---|---|---|
-| （示例）林老师 | 老师 | 中偏低 / 温润 / 清晰 / 三十余 / 尾音下沉 | `media/voice-samples/lin-teacher-sample.mp3` | 自有录制 |
-| 夜兰（样片用） | 学生（待定） | 偏低 / 冷感 / 清晰 / 二十余 / 少停顿 | `media/voice-models/yelan/` | **不可商用**，见 [voice-models/README.md](../media/voice-models/README.md) 第二节 |
-| 甘雨（样片用） | 老师（待定） | 中偏高 / 温润 / 清晰 / 二十余 / 语速慢 | `media/voice-models/ganyu/` | **不可商用**，同上 |
+**这张表只记"人话"：听感、关系位、授权。** 参考音频路径、RVC 模型、pitch、index rate
+这些机器参数一律写进 [`pipeline/config/characters.yaml`](../../pipeline/config/characters.yaml)，
+本表只写对应的 key。同一个路径写两处，迟早改一处忘一处。
 
-最后两行是拿来试流程的 RVC 音色模型，**只能做内部样片**。正式发布前必须换掉，或者拿到授权 —— 理由写在 `media/voice-models/README.md` 里，别跳过。
+| 角色 | 关系位 | 稳定特征 | characters.yaml key | 授权 |
+|---|---|---|---|---|
+| （示例）林老师 | 老师 | 中偏低 / 温润 / 清晰 / 三十余 / 尾音下沉 | （待定） | 自有录制 |
+| 夜兰（样片用） | 学生（待定） | 偏低 / 冷感 / 清晰 / 二十余 / 少停顿 | `student` | **不可商用**，见 [rvc-models/README.md](../../pipeline/engines/rvc-models/README.md) 第二节 |
+| 甘雨（样片用） | 老师（待定） | 中偏高 / 温润 / 清晰 / 二十余 / 语速慢 | `doctor` | **不可商用**，同上 |
+
+最后两行是拿来试流程的 RVC 音色模型，**只能做内部样片**。正式发布前必须换掉，或者拿到授权 ——
+理由写在 `pipeline/engines/rvc-models/README.md` 里，别跳过。
+
+⚠️ **参考音频还是空的。** `content/media/voice-samples/` 里没有文件，`characters.yaml` 里
+所有 `reference_audio` 都是 `null`。没有它 IndexTTS 合成不了，这是当前唯一的硬阻塞。
 
 **RVC 是变声器，不是朗读引擎。** 它要一段现成人声才能干活，文字进不去。所以一个角色的音频是两段流水：`文字 → TTS 或自己念 → RVC 换成目标音色`。
 
@@ -69,7 +77,7 @@
 ## 五、选音流程
 
 1. 从角色档案表读稳定特征，**不要凭印象挑**。
-2. 去 `media/voice-samples/` 试听候选，最多三个。
+2. 去 `content/media/voice-samples/` 试听候选，最多三个。
 3. 选定后把样本文件名写进档案表，下次直接复用。
 4. 整集配完先试听开头 60 秒 —— 60 秒里听不出是谁在说话，就换。
 5. 试听版本记在第 6 节，写清改了几版、改了什么。

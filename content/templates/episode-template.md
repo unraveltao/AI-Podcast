@@ -9,8 +9,9 @@ character_relationship:
 voice_tags: []
 ---
 
-<!-- 用法：整份复制到 episodes/EPxxx-主题名/episode.md，改掉 id / title / status，
-     其余按节填。字段含义和情景库见 docs/project-guide.md，声音标签见 docs/voice-guide.md。 -->
+<!-- 用法：整份复制到 content/episodes/EPxxx-主题名/episode.md，改掉 id / title / status，
+     其余按节填。字段含义和情景库见 content/docs/project-guide.md，
+     声音标签见 content/docs/voice-guide.md。 -->
 
 # 单集内容
 

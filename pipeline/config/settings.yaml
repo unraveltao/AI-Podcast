@@ -1,0 +1,115 @@
+# AI Podcast Audio Pipeline — 全局设置
+#
+# 三条约定：
+#   1. 路径写绝对路径，或相对「仓库根」的路径（不带 ./ 开头的一律按仓库根解析）。
+#   2. 换机器只改本文件，不改 pipeline/ 下的代码。
+#   3. 引擎本体不放进仓库（IndexTTS 已在 E: 上跑通，不搬），只在这里记位置。
+
+project:
+  name: "AI Podcast Audio Pipeline"
+  repo_root: "D:/_dev/own/psychology-podcast"
+
+# ---------------------------------------------------------------- 引擎
+engines:
+  indextts:
+    root: "E:/Apps/AI/Index_tts2.5"
+    python: "E:/Apps/AI/Index_tts2.5/.venv/Scripts/python.exe"
+    model_dir: "E:/Apps/AI/Index_tts2.5/checkpoints"
+    # 为什么不用 CLI：已实测 cli_v2 的 synth 会误报缺 bpe.model 并直接退出（2.5 改用
+    # tiktoken，根本不读 bpe.model）。所以由 tts_adapter 直接 import 推理类，不改 IndexTTS 源码。
+    entry: "indextts.infer_v2_5:IndexTTS2"
+    device: "cuda:0"
+    fp16: true
+
+  applio:
+    installed: true                        # 2026-11-01 装好，V3.7.1 编译包
+    version: "3.7.1"
+    root: "pipeline/engines/applio"
+    python: "pipeline/engines/applio/env/python.exe"      # Python 3.12.15 / torch 2.11.0+cu128
+    ffmpeg: "pipeline/engines/applio/ffmpeg.exe"          # 包自带，跟 RVC 版本对齐
+    rvc_models: "pipeline/engines/rvc-models"
+    # 不模拟点界面：core.py 里有现成的 run_infer_script()，rvc_adapter 直接调它
+    entry: "core:run_infer_script"
+
+# ---------------------------------------------------------------- 外部工具
+tools:
+  ffmpeg: "C:/Users/iron tom/AppData/Local/Microsoft/WinGet/Links/ffmpeg.exe"
+  ffprobe: "C:/Users/iron tom/AppData/Local/Microsoft/WinGet/Links/ffprobe.exe"
+
+# ---------------------------------------------------------------- 目录
+paths:
+  scripts: "pipeline/scripts"
+  outputs: "pipeline/outputs"
+  logs: "pipeline/logs"
+  characters: "pipeline/config/characters.yaml"
+
+# ---------------------------------------------------------------- TTS
+tts:
+  lang: "zh"              # zh / en / ja / yue …；传错会退化成 common，发音会飘
+  timeout_sec: 300
+  retries: 2
+  # IndexTTS2 的情绪控制：留空表示不启用
+  emotion_text: null
+  emotion_weight: null
+  # 实测数据（RTX 4060 Laptop 8GB，关掉 7860 上的 WebUI 之后）：
+  #   模型加载 19.7s；11 字 → 合成 8.5s，RTF ≈ 2.2；输出 22050 Hz 单声道
+  # 如果 WebUI 常驻，同一段音频 RTF 会飙到 25（显存换页），差 10 倍以上
+  output_sample_rate: 22050
+
+# ---------------------------------------------------------------- RVC
+rvc:
+  f0_method: "rmvpe"      # 可选 rmvpe / fcpe / swift（三个预测器都随包带了）
+  pitch_shift: 0          # 同性别 0；男声转女声 +12
+  index_rate: 0.6         # 0.5–0.75，太高带杂音、太低漏字
+  protect: 0.33           # 别超过 0.5，会发闷
+  sample_rate: 40000      # 必须与模型训练采样率一致，不能写 48000
+  volume_envelope: 1.0    # 1.0 = 不压动态；0 = 完全按音量包络
+  embedder_model: "contentvec"   # Applio 默认，也最稳
+  export_format: "WAV"
+  f0_autotune: false      # 说话别开，会带出电音感
+  formant_shifting: false
+  enabled: true           # false 时跳过 RVC，直接用 TTS 原始音
+
+# ---------------------------------------------------------------- 合成
+audio:
+  sample_rate: 44100
+  channels: 1
+  sample_format: "pcm_s16le"
+  target_lufs: -16        # 播客常见响度
+  true_peak_db: -1.5
+  default_pause_ms: 700
+
+  # 归一化规格 —— 见 pipeline/audio_prep.py
+  # 素材格式五花八门（网页录音 mp3、手机 m4a、RVC 吐的 40k wav），进管线前统一一次。
+  reference:
+    sample_rate: 48000    # 跟 IndexTTS 官方示例一致
+    trim_silence: true    # 掐掉首尾静音，-45 dB 以下
+    loudnorm: false       # 参考音只提供音色，动响度会干扰模型判断，默认不做
+    min_sec: 5            # 低于 5 秒音色不够，模型容易跑偏
+    max_sec: 15           # 高于 15 秒对音色没有额外帮助，只是更慢
+  voice:
+    sample_rate: 48000    # 送进 RVC 的干声
+    trim_silence: true
+    loudnorm: false
+  final:
+    sample_rate: 44100
+    trim_silence: false
+    loudnorm: "I=-16:TP=-1.5:LRA=11"
+
+  # 片头片尾背景音乐：必须是可商用素材，没有就保持 null
+  intro: null
+  outro: null
+  bgm: null
+  bgm_gain_db: -22
+
+# ---------------------------------------------------------------- 导出
+export:
+  wav: true
+  mp3: true
+  mp3_bitrate: "192k"
+
+# ---------------------------------------------------------------- 运行
+runtime:
+  keep_intermediate: true   # raw/ 与 converted/ 保留，便于 A/B 试听
+  resume: true              # 失败后从已完成段落续跑
+  fail_fast: false

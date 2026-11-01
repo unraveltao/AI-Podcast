@@ -1,0 +1,29 @@
+# 示例剧本 —— 不是真的一集，是给 ChatGPT 照着抄的骨架。
+# 复制成 EP002.yaml 再改内容。字段说明见同目录 README.md。
+
+episode:
+  id: "EP000"
+  title: "示例：为什么我们总是感到焦虑"
+
+segments:
+  - id: "001"
+    speaker: "doctor"
+    text: "你好，欢迎来到今天的心理学播客。"
+    pause_after_ms: 700
+
+  - id: "002"
+    speaker: "doctor"
+    text: "今天我们来聊一聊焦虑。"
+    pause_after_ms: 1000
+
+  - id: "003"
+    speaker: "student"
+    text: "老师，我最近总觉得心里堵着什么，说不上来。"
+    pause_after_ms: 600
+
+  - id: "004"
+    speaker: "doctor"
+    text: "那我们今天不急着给它起名字，先看看它长什么样。"
+    emotion_text: "温和、放慢"
+    emotion_weight: 0.7
+    pause_after_ms: 900

@@ -1,0 +1,41 @@
+# 角色 → 声音参数。这里是**机器参数的唯一事实来源**。
+#
+# 分工（2026-11-01 定）：
+#   - 本文件：参考音频路径、RVC 模型、转换参数。程序只读这里。
+#   - content/docs/voice-guide.md：听感标签、角色关系、授权状态。只写人话。
+#   两边不重复写同一个路径，避免改一处忘一处。
+#
+# ⚠️ 参考音频现状（2026-11-01 更新）：
+#    narrator 已有参考音频（自己录的，已归一化成 48k 单声道 wav）。
+#    doctor / student 仍是 null —— 要换成角色音，得各补一段 5–15 秒的干净人声。
+#    归一化命令：python pipeline/audio_prep.py reference 原文件.mp3 输出.wav
+
+characters:
+  doctor:
+    display_name: "老师"
+    reference_audio: null          # 例：content/media/voice-samples/lin-teacher-own.wav
+    rvc:
+      model: "pipeline/engines/rvc-models/ganyu/ys_ganyu.pth"
+      index: "pipeline/engines/rvc-models/ganyu/ys_ganyu_added_IVF717_Flat_nprobe_1_ys_ganyu_v2.index"
+      pitch_shift: 0
+      index_rate: 0.6
+      protect: 0.33
+    license: "internal-only"       # 原神 IP，仅内部样片；理由见 engines/rvc-models/README.md 第二节
+
+  student:
+    display_name: "学生"
+    reference_audio: null
+    rvc:
+      model: "pipeline/engines/rvc-models/yelan/yelan.pth"
+      index: "pipeline/engines/rvc-models/yelan/yelan_added_IVF444_Flat_nprobe_1_yelan_v2.index"
+      pitch_shift: 0
+      index_rate: 0.6
+      protect: 0.33
+    license: "internal-only"
+
+  # 只做 TTS、不过 RVC 的角色这样写（旁白、串场用）
+  narrator:
+    display_name: "旁白"
+    reference_audio: "content/media/voice-samples/narrator-selfrecorded.wav"
+    rvc: null
+    license: "自有录制（online-voice-recorder 网页录制，12.67s → 归一化后 11.53s）"
